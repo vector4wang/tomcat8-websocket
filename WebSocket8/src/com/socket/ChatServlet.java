@@ -13,6 +13,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import com.google.gson.Gson;
+
 import utils.MessageUtil;
 
 
@@ -59,29 +61,51 @@ public class ChatServlet {
 		String fromName = messageMap.get("fromName");    //消息来自人 的userId
 		String toName = messageMap.get("toName");       //消息发往人的 userId
 		String mapContent = messageMap.get("content");
+		String type = messageMap.get("type");
+		if(MessageUtil.MESSAGE.equals(type)){
+			if(toName.isEmpty()){
+				sendOffLine(fromName,toName);
+				return;
+			}
+
+			if("all".equals(toName)){
+				String msgContentString = fromName + "对所有人说: " + mapContent;   //构造发送的消息
+				String content = MessageUtil.sendContent(MessageUtil.MESSAGE,msgContentString);
+				broadcastAll(content);
+			}else{
+				try {
+					String content = MessageUtil.sendContent(MessageUtil.MESSAGE,mapContent);
+					singleChat(fromName,toName,content);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}else if(MessageUtil.COORD.equals(type)){
+			System.out.println(mapContent);
+			drawPanel(fromName, toName, mapContent);
+			
+			System.out.println("画图模式");
+			
+		}
 
 		
-		if(toName.isEmpty()){
-			sendOffLine(fromName,toName);
-			return;
-		}
+		
 
-		if("all".equals(toName)){
-			String msgContentString = fromName + "对所有人说: " + mapContent;   //构造发送的消息
-			String content = MessageUtil.sendContent(MessageUtil.MESSAGE,msgContentString);
-			broadcastAll(content);
-		}else{
-			try {
-				String content = MessageUtil.sendContent(MessageUtil.MESSAGE,mapContent);
-				singleChat(fromName,toName,content);
-			} catch (IOException e) {
-				e.printStackTrace();
+		//System.out.println("来自客户端的消息:" + message);
+		//broadcastAll(message);
+	}
+
+	private void drawPanel(String fromName, String toName, String mapContent) throws IOException {
+		
+		String contentTemp = MessageUtil.sendContent(MessageUtil.COORD,mapContent.toString());
+		for (HttpSession key : onlineUsers.keySet()) {
+			if(key.getAttribute("user").equals(toName)){
+				System.out.println(toName);
+				System.out.println(contentTemp);
+				onlineUsers.get(key).session.getBasicRemote().sendText(contentTemp);
 			}
 		}
-
-
-		System.out.println("来自客户端的消息:" + message);
-		broadcastAll(message);
+		
 	}
 
 	private void singleChat(String fromName, String toName, String mapContent) throws IOException {
