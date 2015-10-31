@@ -23,7 +23,8 @@ body {
 	session.setAttribute("user", name);
 %>
 <script type="text/javascript">
-var self = "<%=name%>";
+var self = "<%=name%>
+	";
 	var ws = null;
 	function startWebSocket() {
 		if ('WebSocket' in window)
@@ -74,9 +75,32 @@ var self = "<%=name%>";
 		var msg = fromName + "," + toName + "," + content;
 		ws.send(msg);
 	}
+
+	function initCanvas() {
+		var oC = document.getElementById('c1');
+		var oGC = oC.getContext('2d');
+		oC.onmousedown = function(ev) {
+			var ev = ev || window.event;
+			oGC.moveTo(ev.clientX - oC.offsetLeft, ev.clientY - oC.offsetTop);
+			document.onmousemove = function(ev) {
+				var ev = ev || window.event;
+				websocket.send((ev.clientX - oC.offsetLeft) + ","
+						+ (ev.clientY - oC.offsetTop));
+				oGC.lineTo(ev.clientX - oC.offsetLeft, ev.clientY
+						- oC.offsetTop);
+				oGC.stroke();
+
+			};
+			document.onmouseup = function() {
+				document.onmousemove = null;
+				document.onmouseup = null;
+			};
+		};
+	}
 </script>
 </head>
-<body onload="startWebSocket();" oncontextmenu="return false;" onselectstart="return false;">
+<body onload="startWebSocket();" oncontextmenu="return false;"
+	onselectstart="return false;">
 	<h1>WebIM</h1>
 	登录状态：
 	<span id="denglu" style="color: red;">正在登录</span>
@@ -94,5 +118,11 @@ var self = "<%=name%>";
 	<br>
 	<input type="button" value="send" onclick="sendMsg()" />
 	<br>
+	<div id='canvas'
+		style="margin-top: 10px; height: 250px; width: 280px; border: 1px solid; background-color: gray;">
+		<canvas id="c1" width="400" height="400">  
+		<span>不支持canvas浏览器</span>  
+		</canvas>
+	</div>
 </body>
 </html>
