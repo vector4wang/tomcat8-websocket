@@ -49,7 +49,9 @@ public class ChatServlet {
 
 	@OnClose
 	public void onClose(){
-		onlineUsers.remove(this);  //从set中删除
+		if(onlineUsers.containsKey(this.httpSession)){
+			onlineUsers.remove(this);  //从set中删除
+		}
 		subOnlineCount();           //在线数减1   
 		System.out.println("有一连接关闭！当前在线人数为" + getOnlineCount());
 	}
@@ -100,8 +102,6 @@ public class ChatServlet {
 		String contentTemp = MessageUtil.sendContent(MessageUtil.COORD,mapContent.toString());
 		for (HttpSession key : onlineUsers.keySet()) {
 			if(key.getAttribute("user").equals(toName)){
-				System.out.println(toName);
-				System.out.println(contentTemp);
 				onlineUsers.get(key).session.getBasicRemote().sendText(contentTemp);
 			}
 		}

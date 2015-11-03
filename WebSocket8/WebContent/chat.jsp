@@ -13,18 +13,20 @@ body {
 	border: 1px solid;
 	overflow: auto;
 }
+
 .details {
 	width: 300px;
 	height: 400px;
 	border: 1px solid;
 	margin-bottom: 10px;
-	float:left;
+	float: left;
 }
-#canvas{
-	float:left;
-	height: 400px; 
-	width: 400px; 
-	border: 1px solid; 
+
+#canvas {
+	float: left;
+	height: 400px;
+	width: 400px;
+	border: 1px solid;
 	margin-bottom: 10px;
 	margin-left: 10px;
 	background-color: white;
@@ -44,37 +46,51 @@ body {
 	onselectstart="return false;">
 	<div class='details'>
 		<h1>WebIM</h1>
-		登录状态：
-		<span id="denglu" style="color: red;">正在登录</span>
-		<br> 昵称：
-		<span id="userName"></span>
-		<br>
-		<br> To：
-		<select id='userlist'>
-		</select>
-		<span style="color: red;">*</span>请选择聊天对象
-		<br> 发送内容：
-		<input type="text" id="writeMsg" value="嗨~" />
-		<br> 聊天框：
+		登录状态： <span id="denglu" style="color: red;">正在登录</span> <br> 昵称：
+		<span id="userName"></span> <br> <br> To： <select
+			id='userlist'>
+		</select> <span style="color: red;">*</span>请选择聊天对象 <br> 发送内容： <input
+			type="text" id="writeMsg" value="嗨~" /> <br> 聊天框：
 	</div>
-	
+
 	<div id='canvas'>
 		<canvas id="c1" width="400" height="400">  
 		<span>不支持canvas浏览器</span>  
 		</canvas>
 	</div>
-	
-	<div style="clear:both;"></div>
-	
+
+	<div style="clear: both;"></div>
+
 	<div id="message"></div>
 	<br>
 	<input type="button" value="send" onclick="sendMsg()" />
 	<br>
 
-	
+
 	<script type="text/javascript">
 	var self = "<%=name%>";
 	var ws = null;
+	
+	var oC = document.getElementById('c1');
+	var oGC = oC.getContext('2d');
+	
+
+	function DrawP(Canvas,P)
+
+	{
+	with (Canvas)
+
+	{
+
+	moveTo(P[0],P[1]);
+
+	lineTo(P[0]+1,P[1]+1);
+
+	}
+
+	}
+
+	
 	function startWebSocket() {
 		if ('WebSocket' in window)
 			ws = new WebSocket("ws://localhost:8080/WebSocket8/websocket");
@@ -83,13 +99,9 @@ body {
 		else
 			alert("not support");
 
-		var flag;
-		
 		ws.onmessage = function(evt) {
 			var data = evt.data;
 			var o = eval('(' + data + ')');//将字符串转换成JSON
-			
-			
 			if (o.type == 'message') {
 				setMessageInnerHTML(o.data);
 			} else if (o.type == 'user') {
@@ -104,14 +116,18 @@ body {
 					}
 				});
 			}else if(o.type == 'coord'){
+				
 				var coordArry = o.data.split("_");
-				var oC = document.getElementById('c1');
-				var oGC = oC.getContext('2d');
 				var x = coordArry[0];
 				var y = coordArry[1];
-				oGC.arc(x,y,1,0,360,false);
+				var point=Array(x,y);
+				console.log(point);
+				//oGC.beginPath();
+				oGC.lineWidth = 1;	
+				DrawP(oGC,point);	
 				oGC.stroke();
-
+				//oGC.beginPath();
+				
 			}
 		};
 		ws.onclose = function(evt) {
@@ -156,8 +172,6 @@ body {
 				 	var x = ev.clientX-oC.offsetLeft;
 		            var y = ev.clientY-oC.offsetTop;
 		            oGC.lineTo(x,y);
-		           
-		           
 		            
 		            var fromName = self;
 		    		var toName = $("#userlist").val(); //发给谁
@@ -165,9 +179,7 @@ body {
 		    		var content = x + '_' + y;
 		    		var msg = fromName + "," + toName + "," + content + "," + type;
 		    		ws.send(msg);
-		    		
 		    		oGC.stroke();
-		    		
 			};
 			document.onmouseup = function() {
 				document.onmousemove = null;
@@ -176,6 +188,6 @@ body {
 		};
 	}
 </script>
-	
+
 </body>
 </html>
