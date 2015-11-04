@@ -76,20 +76,13 @@ body {
 	
 
 	function DrawP(Canvas,P)
-
 	{
-	with (Canvas)
-
-	{
-
-	moveTo(P[0],P[1]);
-
-	lineTo(P[0]+1,P[1]+1);
-
+		with (Canvas)
+		{
+			moveTo(P[0],P[1]);
+			lineTo(P[0]+1,P[1]+1);
+		}
 	}
-
-	}
-
 	
 	function startWebSocket() {
 		if ('WebSocket' in window)
@@ -120,11 +113,13 @@ body {
 				var coordArry = o.data.split("_");
 				var x = coordArry[0];
 				var y = coordArry[1];
-				var point=Array(x,y);
-				console.log(point);
-				//oGC.beginPath();
+				//var point=Array(x,y);
 				oGC.lineWidth = 1;	
-				DrawP(oGC,point);	
+				oGC.moveTo(x-1,y-1);
+				oGC.lineTo(x,y);
+				//oGC.beginPath();
+				
+				//DrawP(oGC,point);	
 				oGC.stroke();
 				//oGC.beginPath();
 				
