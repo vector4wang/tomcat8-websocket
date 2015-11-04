@@ -73,17 +73,7 @@ body {
 	
 	var oC = document.getElementById('c1');
 	var oGC = oC.getContext('2d');
-	
 
-	function DrawP(Canvas,P)
-	{
-		with (Canvas)
-		{
-			moveTo(P[0],P[1]);
-			lineTo(P[0]+1,P[1]+1);
-		}
-	}
-	
 	function startWebSocket() {
 		if ('WebSocket' in window)
 			ws = new WebSocket("ws://localhost:8080/WebSocket8/websocket");
@@ -114,16 +104,10 @@ body {
 				var coordArry = o.data.split("_");
 				var x = coordArry[0];
 				var y = coordArry[1];
-				//var point=Array(x,y);
 				oGC.lineWidth = 1;	
 				oGC.moveTo(x-1,y-1);
 				oGC.lineTo(x,y);
-				//oGC.beginPath();
-				
-				//DrawP(oGC,point);	
 				oGC.stroke();
-				//oGC.beginPath();
-				
 			}
 		};
 		ws.onclose = function(evt) {
