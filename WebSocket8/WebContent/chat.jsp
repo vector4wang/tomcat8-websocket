@@ -95,6 +95,7 @@ body {
 		ws.onmessage = function(evt) {
 			var data = evt.data;
 			var o = eval('(' + data + ')');//将字符串转换成JSON
+			console.log(o);
 			if (o.type == 'message') {
 				setMessageInnerHTML(o.data);
 			} else if (o.type == 'user') {

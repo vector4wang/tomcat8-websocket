@@ -76,8 +76,7 @@ public class ChatServlet {
 				broadcastAll(content);
 			}else{
 				try {
-					String content = MessageUtil.sendContent(MessageUtil.MESSAGE,mapContent);
-					singleChat(fromName,toName,content);
+					singleChat(fromName,toName,mapContent);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -112,6 +111,7 @@ public class ChatServlet {
 		String msgContentString = fromName + "对" + toName + "说: " + mapContent;
 		String contentTemp = MessageUtil.sendContent(MessageUtil.MESSAGE,msgContentString);
 		boolean isExit = false;
+		System.out.println(contentTemp);
 		for (HttpSession key : onlineUsers.keySet()) {
 			if(key.getAttribute("user").equals(toName)){
 				isExit = true;
