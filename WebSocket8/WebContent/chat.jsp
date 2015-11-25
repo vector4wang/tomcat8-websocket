@@ -31,6 +31,13 @@ body {
 	margin-left: 10px;
 	background-color: white;
 }
+#webRtc {
+	float: left;
+	width: 400px;
+	height: 400px;
+	border: 1px solid;
+	margin-left: 10px;
+}
 </style>
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -50,7 +57,8 @@ body {
 		<span id="userName"></span> <br> <br> To： <select
 			id='userlist'>
 		</select> <span style="color: red;">*</span>请选择聊天对象 <br> 发送内容： <input
-			type="text" id="writeMsg" value="嗨~" /> <br> 聊天框：
+			type="text" id="writeMsg" value="嗨~" /> <br> 聊天框：<br>
+			<button id="run">开启网络摄像头</button><Br/>
 	</div>
 
 	<div id='canvas'>
@@ -59,8 +67,13 @@ body {
 		</canvas>
 	</div>
 
+	<div id = "webRtc">
+		<video id="webcam" width=100% height=100%></video>
+	</div>
+
 	<div style="clear: both;"></div>
 
+	
 	<div id="message"></div>
 	<br>
 	<input type="button" value="send" onclick="sendMsg()" />
@@ -68,6 +81,40 @@ body {
 
 
 	<script type="text/javascript">
+	/** 判断浏览器是否支持视频聊天 **/
+	navigator.getUserMedia || (navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia || navigator.msGetUserMedia);
+	if (!navigator.getUserMedia) {
+	    alert('not support');
+	}
+	
+	var startCamBtn = $('#run');
+	startCamBtn.click(startWebCam);
+	
+	function startWebCam(e){
+		navigator.getUserMedia({
+			video:true,
+			audio:true
+		},onSuccess,onError);
+		
+		function onSuccess(stream){
+			var video = document.getElementById('webcam');
+			if(window.URL){
+				console.log(stream);
+				video.src = window.URL.createObjectURL(stream);
+			}else{
+				video.src = stream;
+			}
+			
+			video.autoplay = true;
+		}
+		
+		function onError(){
+			alert('have onKnow Error!');
+		}
+	}
+	
+	
+	
 	var self = "<%=name%>";
 	var ws = null;
 	
