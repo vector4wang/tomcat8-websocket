@@ -1,0 +1,5 @@
+# tomcat8-websocket
+使用tomcat8制作websocket 的单人与多人聊天
+
+最近有人跟我咨询websocket的相关，这个是我两年前用servlet写的一个demo，现在的话我可能会偏向使用springboot，抽空我会把此项目重构一下。
+也可能会在springboot中重写写一个示例
