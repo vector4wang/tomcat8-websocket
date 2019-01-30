@@ -43,6 +43,7 @@
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>WebIM</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
     <%
         String name = request.getParameter("username");
@@ -97,9 +98,9 @@
 
     function startWebSocket() {
         if ('WebSocket' in window)
-            ws = new WebSocket("ws://localhost:8080/websocket");
+            ws = new WebSocket("ws://192.168.22.2:8080/websocket");
         else if ('MozWebSocket' in window)
-            ws = new MozWebSocket("ws://localhost:8080/websocket");
+            ws = new MozWebSocket("ws://192.168.22.2:8080/websocket");
         else
             alert("not support");
 
@@ -128,10 +129,15 @@
                 var x = coordArry[0];
                 var y = coordArry[1];
                 console.log("x: " + x + " y: " + y)
-                oGC.lineWidth = 2;
-                oGC.lineTo(x, y);
-                // oGC.closePath();
-                oGC.stroke();
+                if (x=="0" && y=="0") {
+                    // oGC.moveTo(0, 0);.
+                    console.log("show retry===> x: " + x + " y: " + y)
+                    oGC.beginPath();
+                }else{
+                    oGC.lineWidth = 2;
+                    oGC.lineTo(x, y);
+                    oGC.stroke();
+                }
             }
         };
         ws.onclose = function (evt) {
@@ -176,20 +182,16 @@
                 var ev = ev || window.event;
                 var x = ev.clientX - oC.offsetLeft;
                 var y = ev.clientY - oC.offsetTop;
-                if (x == y == 0) {
-                    oGC.moveTo(0, 0);
-                }else{
-                    oGC.lineTo(x, y);
-                    var message = {
-                        fromUserName: self,
-                        toUserName: $("#userlist").val(),
-                        content: x + ',' + y,
-                        msgType: "coord",
-                    };
-                    ws.send(JSON.stringify(message));
-                    oGC.stroke();
-                }
 
+                oGC.lineTo(x, y);
+                var message = {
+                    fromUserName: self,
+                    toUserName: $("#userlist").val(),
+                    content: x + ',' + y,
+                    msgType: "coord",
+                };
+                ws.send(JSON.stringify(message));
+                oGC.stroke();
             };
             document.onmouseup = function () {
                 document.onmousemove = null;

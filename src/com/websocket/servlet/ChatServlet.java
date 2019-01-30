@@ -89,9 +89,10 @@ public class ChatServlet {
         message.setToUserName(toName);
         message.setMsgType(MessageUtil.COORD);
         if ("all".equals(toName)) {
-            singleChat(message);
-        } else {
             broadcastAll(message);
+        } else {
+            singleChat(message);
+
         }
 
     }
@@ -163,11 +164,11 @@ public class ChatServlet {
         message.setCreateTime(new Date().getTime());
         message.setMsgType(MessageUtil.TEXT);
         message.setContent(fromName + "已下线");
-//        for (HttpSession key : onlineUsers.keySet()) {
-//            if (key.getAttribute("user").equals(fromName) || key.getAttribute("user").equals(toName)) {
-//                onlineUsers.get(key).session.getBasicRemote().sendText(content);
-//            }
-//        }
+        for (HttpSession key : onlineUsers.keySet()) {
+            if (key.getAttribute("user").equals(fromName)) {
+                onlineUsers.remove(key);
+            }
+        }
         broadcastAll(fromName + "已下线",fromName);
     }
 
@@ -204,6 +205,10 @@ public class ChatServlet {
     @OnError
     public void onError(Session session, Throwable error) {
         System.out.println("发生错误");
+//        Set<HttpSession> httpSessions = onlineUsers.keySet();
+//        for (HttpSession httpSession : httpSessions) {
+//            onlineUsers.get(httpSession).session
+//        }
         error.printStackTrace();
     }
 
