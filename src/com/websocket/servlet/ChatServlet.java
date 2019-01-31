@@ -64,7 +64,7 @@ public class ChatServlet {
 
             if ("all".equals(message.getToUserName())) {
                 String msgContentString = message.getFromUserName() + "对所有人说: " + message.getContent();   //构造发送的消息
-                broadcastAll(msgContentString,null);
+                broadcastAll(msgContentString, null);
             } else {
                 try {
                     singleChat(message.getFromUserName(), message.getToUserName(), message.getContent());
@@ -112,7 +112,7 @@ public class ChatServlet {
                 }
             }
         } else {
-            broadcastAll("客服不在线请留言...",null);
+            broadcastAll("客服不在线请留言...", null);
         }
     }
 
@@ -128,7 +128,7 @@ public class ChatServlet {
         Message message = new Message();
         message.setFromUserName(fromName);
         message.setToUserName(toName);
-        message.setContent(content);
+        message.setContent(fromName + "对你说：" + content);
         message.setCreateTime(new Date().getTime());
         message.setMsgType(MessageUtil.TEXT);
         boolean isExit = false;
@@ -144,7 +144,7 @@ public class ChatServlet {
                 }
             }
         } else {
-            broadcastAll("客服不在线请留言...",null);
+            broadcastAll("客服不在线请留言...", null);
         }
 
     }
@@ -169,7 +169,7 @@ public class ChatServlet {
                 onlineUsers.remove(key);
             }
         }
-        broadcastAll(fromName + "已下线",fromName);
+        broadcastAll(fromName + "已下线", fromName);
     }
 
     /**
